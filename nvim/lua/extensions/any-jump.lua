@@ -1,0 +1,1 @@
+require("any-jump").setup({})
