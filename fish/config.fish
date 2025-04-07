@@ -1,15 +1,18 @@
 #####################################################
 # status barの設定
 #####################################################
+# Detect OS
+set OS (uname)
+
 if status is-interactive
     set -g theme_date_format "+%Y-%m-%d %H:%M:%S" # 日付のフォーマットを変更(例： 2022-03-01 23:22:22)
     set -g fish_prompt_pwd_dir_length 0           # フォルダ名が省略されていたものを省略しなくする
-    eval (/opt/homebrew/bin/brew shellenv)
+    if test "$OS" = "Darwin"
+        eval (/opt/homebrew/bin/brew shellenv)
+    end
     # Commands to run in interactive sessions can go here
 end
 
-# Detect OS
-set OS (uname)
 
 # macOS の場合
 if test "$OS" = "Darwin"

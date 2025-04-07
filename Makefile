@@ -1,7 +1,7 @@
 GIT_CONFIG_FILE=./git/global_setting
 
 .PHONY: install-any-tools
-install-any-tools: install-brew install-mise install-peco install-jq install-tree
+install-any-tools: install-brew install-mise install-peco install-jq install-tree install-lsd
 
 .PHONY: brew
 install-brew:
@@ -60,6 +60,19 @@ install-tree:
 		echo "✔ tree is installed!"; \
 	fi
 
+.PHONY: lsd
+install-lsd:
+	@echo "Checking if lsd is installed..."
+	@if command -v lsd >/dev/null 2>&1; then \
+		echo "✔ lsd is already installed."; \
+	else \
+		echo "❌ lsd not found. Installing..."; \
+		brew install lsd; \
+		echo "✔ lsd is installed!"; \
+	fi
+
+
+
 .PHONY: check-fish install-fish
 # OSごとのインストールコマンド（必要に応じて拡張可）
 install-fish:
@@ -68,12 +81,28 @@ install-fish:
 		echo "✔ fish is already installed."; \
 	else \
 		echo "❌ fish not found. Installing..."; \
-		curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher; \
-		fisher install oh-my-fish/theme-bobthefish; \
+		sudo apt-add-repository ppa:fish-shell/release-3; \
+		sudo apt update && sudo apt install fish -y; \
 		fish; \
-		chsh -s /opt/homebrew/bin/fish; \
+		chsh -s /usr/bin/fish; \
 		echo "✔ fish is installed!"; \
+		echo "copy fish config"; \
+		cp -f ~/.config/fish/config.fish ~/.config/fish/config.fish.bak; \
+		cp -f ./fish/config.fish ~/.config/fish/; \
+		source ~/.config/fish/config.fish; \
 	fi
+	@echo "Checking if fisher is installed..."
+	@fish -c 'if not functions -q fisher; \
+		echo "❌ fisher not found. Installing..."; \
+		curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source; \
+		fisher install jorgebucaran/fisher; \
+	else; \
+		echo "✔ fisher is already installed."; \
+	end'
+	@echo "Installing fisher plugins..."
+	@fish -c 'fisher install oh-my-fish/theme-bobthefish 0rax/fish-bd jethrokuan/z edc/bass'
+	@echo "✔ All plugins installed!"
+
 
 .PHONY: git-config-from-file
 git-config-from-file:

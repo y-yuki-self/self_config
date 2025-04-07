@@ -6,6 +6,18 @@ local config = wezterm.config_builder()
 
 -- This is where you actually apply your config choices
 
+-- Checking os
+local target = wezterm.target_triple
+local is_wsl = false
+-- Check WSL : Linux でかつ、WSL 特有の環境変数が存在する
+if target:find("linux") and os.getenv("WSL_DISTRO_NAME") then
+  is_wsl = true
+end
+-- WSL: Ubuntu の場合のみ設定
+if is_wsl and os.getenv("WSL_DISTRO_NAME") == "Ubuntu" then
+  config.default_domain = 'WSL:Ubuntu'
+end
+
 -- For example, changing the color scheme:
 config.color_scheme = "AdventureTime"
 
