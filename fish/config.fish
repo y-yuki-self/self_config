@@ -8,8 +8,25 @@ if status is-interactive
     # Commands to run in interactive sessions can go here
 end
 
-# brew path
-set -x PATH "/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+# Detect OS
+set OS (uname)
+
+# macOS の場合
+if test "$OS" = "Darwin"
+    echo "Setting up for macOS"
+    # brew path
+    set -x PATH "/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+end
+# Linux の場合（さらに WSL チェック）
+if test "$OS" = "Linux"
+    if grep -qEi "(Microsoft|WSL)" /proc/version
+        echo "Setting up for WSL"
+    else
+        echo "Setting up for Linux"
+    end
+    # brew path
+    set -x PATH "/home/linuxbrew/.linuxbrew/bin:$PATH"
+end
 
 # set color
 #set fish_color_command brue
